@@ -1,5 +1,5 @@
 bazel-*
-sample/bin/
-sample/obj/
-sample/build_cmake/
+sample/*/bin/
+sample/*/obj/
+sample/*/build_cmake/
 MODULE.bazel.lock

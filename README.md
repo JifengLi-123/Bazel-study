@@ -2,35 +2,46 @@
 
 ## Native ビルド → Bazel 移植調査サンプル
 
-Ubuntu 24.04 上の Native ビルド（Makefile / CMake）を Bazel に移植する方法を検証するためのサンプル一式。`sample/` に同一内容の C++ サンプル（`mathutils` ライブラリ + `sample_app` 実行ファイル）を、3つのビルド方式で用意している。
+Ubuntu 24.04 上の Native ビルド（Makefile / CMake）を Bazel に移植する方法を検証するためのサンプル一式。`sample/` 配下に **全く同じディレクトリ構成** を持つ2つのアプリ（`SampleApp-A`, `SampleApp-B`）を用意し、それぞれが Makefile / CMakeLists.txt / BUILD の3つのビルド定義を個別に持つ。
 
 ```
 sample/
-  include/mathutils.h
-  src/mathutils.cpp
-  src/main.cpp
-  Makefile        # Make 版
-  CMakeLists.txt  # CMake 版
-  BUILD           # Bazel 版
+  SampleApp-A/
+    include/mathutils.h
+    src/mathutils.cpp
+    src/main.cpp
+    Makefile        # Make 版
+    CMakeLists.txt  # CMake 版
+    BUILD           # Bazel 版
+  SampleApp-B/
+    include/mathutils.h
+    src/mathutils.cpp
+    src/main.cpp
+    Makefile        # Make 版（SampleApp-A と同一内容）
+    CMakeLists.txt  # CMake 版（SampleApp-A と同一内容）
+    BUILD           # Bazel 版（SampleApp-A と同一内容）
 WORKSPACE          # Bazel（WORKSPACE レガシー方式）
 .bazelrc           # bzlmod 無効化（WORKSPACE方式に統一）
 .bazelversion      # Bazel バージョン固定（bazelisk 用）
 ```
 
-ビルド方法:
+`SampleApp-A` は元々の `mathutils`（`add`/`multiply`）サンプル、`SampleApp-B` は別の演算（`subtract`/`divide`）を持つ独立したサンプルだが、ディレクトリ構成・ビルドファイルの書き方（Makefile/CMakeLists.txt/BUILD の内容）は両者で完全に同一にしている。
+
+ビルド方法（`SampleApp-B` も同様に `SampleApp-A` を置き換えるだけ）:
 
 ```sh
 # Make
-cd sample && make && ./bin/sample_app
+cd sample/SampleApp-A && make && ./bin/sample_app
 
 # CMake
-cd sample && cmake -S . -B build_cmake && cmake --build build_cmake && ./build_cmake/sample_app
+cd sample/SampleApp-A && cmake -S . -B build_cmake && cmake --build build_cmake && ./build_cmake/sample_app
 
 # Bazel（リポジトリルートで実行）
-bazel build //sample:sample_app && ./bazel-bin/sample/sample_app
+bazel build //sample/SampleApp-A:sample_app && ./bazel-bin/sample/SampleApp-A/sample_app
+bazel build //sample/SampleApp-B:sample_app && ./bazel-bin/sample/SampleApp-B/sample_app
 ```
 
-3方式とも同じ出力（`add(6, 7) = 13` / `multiply(6, 7) = 42`）になることを確認済み。
+Make / CMake / Bazel の3方式とも、`SampleApp-A`（`add(6, 7) = 13` / `multiply(6, 7) = 42`）・`SampleApp-B`（`subtract(6, 7) = -1` / `divide(7, 6) = 1`）でそれぞれ同じ出力になることを確認済み。
 
 ### Makefile から Bazel への移植方法
 
