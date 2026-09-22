@@ -29,19 +29,30 @@ WORKSPACE          # Bazel（WORKSPACE レガシー方式）
 
 ビルド方法（`SampleApp-B` も同様に `SampleApp-A` を置き換えるだけ）:
 
-```sh
-# Make
-cd sample/SampleApp-A && make && ./bin/sample_app
+1. CmakeBuild（cmakeBuild.py）
+操作	コマンド
+Aだけビルド	python3 cmakeBuild.py --app A
+Bだけビルド	python3 cmakeBuild.py --app B
+ALLビルド	python3 cmakeBuild.py --app ALL（または python3 cmakeBuild.py）
+Cleanしてビルド	python3 cmakeBuild.py --clean --app A（B/ALLも同様に --app を変更）
+Cleanのみ	python3 cmakeBuild.py --clean-only
+2. MakefileBuild（Makefile）
+操作	コマンド
+Aだけビルド	make APP=A
+Bだけビルド	make APP=B
+ALLビルド	make APP=ALL（または make）
+Cleanしてビルド	make clean && make APP=A（B/ALLも同様）
+Cleanのみ	make clean
 
-# CMake
-cd sample/SampleApp-A && cmake -S . -B build_cmake && cmake --build build_cmake && ./build_cmake/sample_app
+※ clean は現在 APP を問わず MakefileBuild フォルダ全体を削除する仕様なので、「Clean→ビルド」は2コマンドを && で連結する形になります（clean自体にAPPを渡しても意味を持ちません）。
 
-# Bazel（リポジトリルートで実行）
-bazel build //sample/SampleApp-A:sample_app && ./bazel-bin/sample/SampleApp-A/sample_app
-bazel build //sample/SampleApp-B:sample_app && ./bazel-bin/sample/SampleApp-B/sample_app
-```
-
-Make / CMake / Bazel の3方式とも、`SampleApp-A`（`add(6, 7) = 13` / `multiply(6, 7) = 42`）・`SampleApp-B`（`subtract(6, 7) = -1` / `divide(7, 6) = 1`）でそれぞれ同じ出力になることを確認済み。
+3. Bazel
+操作	コマンド
+Aだけビルド	bazel build //sample/SampleApp-A:sample_app-Bazel_A
+Bだけビルド	bazel build //sample/SampleApp-B:sample_app-Bazel_B
+ALLビルド	bazel build //...
+Cleanしてビルド	bazel clean && bazel build //...（A/Bだけなら対象を絞る）
+Cleanのみ	bazel clean（完全リセットなら bazel clean --expunge）
 
 ### Makefile から Bazel への移植方法
 

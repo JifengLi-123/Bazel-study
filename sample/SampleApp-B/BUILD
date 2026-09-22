@@ -6,7 +6,7 @@ cc_library(
 )
 
 cc_binary(
-    name = "sample_app",
+    name = "sample_app-Bazel_B",
     srcs = ["src/main.cpp"],
     deps = [":mathutils"],
 )
