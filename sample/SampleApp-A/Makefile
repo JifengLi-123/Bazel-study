@@ -3,7 +3,7 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Iinclude
 
 BIN_DIR := bin
 OBJ_DIR := obj
-TARGET := $(BIN_DIR)/sample_app
+TARGET := $(BIN_DIR)/sample_app-A
 
 SRCS := src/mathutils.cpp src/main.cpp
 OBJS := $(SRCS:src/%.cpp=$(OBJ_DIR)/%.o)
