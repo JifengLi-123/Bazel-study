@@ -1,0 +1,4 @@
+bazel-*
+sample/bin/
+sample/obj/
+MODULE.bazel.lock
