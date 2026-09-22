@@ -6,8 +6,9 @@ CmakeBuild.py - SampleApp-A / SampleApp-B の CMake ビルドラッパー
     python3 CmakeBuild.py --app A            # SampleApp-A のみビルド
     python3 CmakeBuild.py --app B            # SampleApp-B のみビルド
     python3 CmakeBuild.py --app ALL          # 両方ビルド（デフォルト）
-    python3 CmakeBuild.py --clean-only       # ビルドディレクトリを削除
+    python3 CmakeBuild.py --clean            # CmakeBuildフォルダを削除してから再ビルド
     python3 CmakeBuild.py --clean --app A    # クリーン後、Aのみ再ビルド
+    python3 CmakeBuild.py --clean-only       # CmakeBuildフォルダを削除のみ（ビルドしない）
 """
 
 import argparse
@@ -33,15 +34,11 @@ def run(cmd: list[str]) -> None:
 
 
 def clean() -> None:
-    if BUILD_DIR.exists():
-        print(f"[CmakeBuild] クリーンアップ: {BUILD_DIR} を削除します")
-        shutil.rmtree(BUILD_DIR)
+    if CMAKEBUILD_DIR.exists():
+        print(f"[CmakeBuild] クリーンアップ: {CMAKEBUILD_DIR} を削除します")
+        shutil.rmtree(CMAKEBUILD_DIR)
     else:
-        print(f"[CmakeBuild] {BUILD_DIR} は存在しません。クリーンアップ不要です")
-
-    if EXECUTABLE_DIR.exists():
-        print(f"[CmakeBuild] クリーンアップ: {EXECUTABLE_DIR} を削除します")
-        shutil.rmtree(EXECUTABLE_DIR)
+        print(f"[CmakeBuild] {CMAKEBUILD_DIR} は存在しません。クリーンアップ不要です")
 
 
 def configure(app: str) -> None:
@@ -70,7 +67,7 @@ def main() -> None:
     parser.add_argument(
         "--clean",
         action="store_true",
-        help="ビルドディレクトリを削除する（--appと併用可。併用時はクリーン後にビルド実行）",
+        help="CmakeBuildフォルダを削除する（--appと併用可。併用時はクリーン後にビルド実行）",
     )
     parser.add_argument(
         "--clean-only",
