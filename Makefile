@@ -19,8 +19,10 @@ endif
 clean:
 ifeq ($(APP),A)
 	$(MAKE) -C sample/SampleApp-A clean BIN_DIR=$(BUILD_ROOT)/A/bin OBJ_DIR=$(BUILD_ROOT)/A/obj
+	rm -rf $(BUILD_ROOT)/A
 else ifeq ($(APP),B)
 	$(MAKE) -C sample/SampleApp-B clean BIN_DIR=$(BUILD_ROOT)/B/bin OBJ_DIR=$(BUILD_ROOT)/B/obj
+	rm -rf $(BUILD_ROOT)/B
 else
 	rm -rf $(ROOT_DIR)/MakefileBuild
 endif
